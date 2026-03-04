@@ -1,12 +1,3 @@
-<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/layout.svg" width="35" height="35" /> XencyNote: XonFox Brand Vault
-
-<p align="left">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Version-1.0.0-blue%3Fstyle%3Dfor-the-badge" alt="Version" />
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/React-20232A%3Fstyle%3Dfor-the-badge%26logo%3Dreact%26logoColor%3D61DAFB" alt="React" />
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Tailwind_CSS-38B2AC%3Fstyle%3Dfor-the-badge%26logo%3Dtailwind-css%26logoColor%3Dwhite" alt="Tailwind" />
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Status-Stable-success%3Fstyle%3Dfor-the-badge" alt="Status" />
-</p>
-
 XencyNote holo ekta premium brand asset management system. Eta designer ebong developer-der jonno emon ekta dynamic workspace provide kore jekhane brand identity (Colors, Typography, Assets) organize kora jay ekdom professional level-e.
 
 🚀 Key Features & Modules
@@ -29,36 +20,21 @@ Typography
 
 Document font hierarchies, weights, and specific usage rules.
 
-📂 Asset & Task Control
+🖥️ Quick Setup (Copy & Run)
 
-Asset Manager: Image upload capability for local logo previews and brand mark management.
+Nicher code block gulo GitHub-er default copy button-er maddhome ekta click-ei copy kora jabe:
 
-Smart Checklists: Interactive brand deliverable tracker to ensure zero-miss strategy.
-
-Dynamic Grids: High-performance tables for technical specifications and brand guidelines.
-
-🖥️ Live Preview & Setup
-
-Prerequisites
-
-Node.js (LTS version recommended)
-
-npm or Yarn
-
-Installation Steps
-
-Clone the Source:
+1. Repository Clone
 
 git clone [https://github.com/YOUR_USERNAME/XencyNote.git](https://github.com/YOUR_USERNAME/XencyNote.git)
 
 
-Setup Dependencies:
+2. Enter Directory & Install
 
-cd XencyNote
-npm install
+cd XencyNote && npm install
 
 
-Start Development:
+3. Launch Workspace
 
 npm start
 
@@ -88,7 +64,7 @@ Apni jodi ei project-e contribute korte chan:
 
 Fork kora repo-te feature branch create korun.
 
-Changes commit korun.
+Changes Commit korun.
 
 Pull Request (PR) open korun.
 
@@ -98,6 +74,6 @@ Distributed under the MIT License. Created with ❤️ by XencyPro.
 
 <p align="left">
 <a href="https://www.google.com/search?q=https://github.com/YOUR_USERNAME">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Follow-GitHub-181717%3Fstyle%3Dflat-square%26logo%3Dgithub%26logoColor%3Dwhite" />
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Follow-GitHub-181717%3Fstyle%3Dflat-square%26logo%3Dgithub%26logoColor%3Dwhite" alt="GitHub Follow" />
 </a>
 </p>
