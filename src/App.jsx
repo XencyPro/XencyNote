@@ -21,9 +21,8 @@ import {
 } from 'lucide-react';
 
 /**
- * FILE: App.jsx
- * LOCATION: src/App.jsx
- * INSTRUCTION: This is the main component file for your GitHub repository.
+ * PROJECT: XonFox Brand Vault (XencyNote)
+ * PASTE LOCATION: src/App.jsx
  */
 
 const App = () => {
@@ -32,6 +31,7 @@ const App = () => {
   const [brandName, setBrandName] = useState('My Workspace');
   const fileInputRef = useRef(null);
 
+  // Initialize data from LocalStorage
   useEffect(() => {
     const savedData = localStorage.getItem('xonfox_vault_v11_neon');
     if (savedData) {
@@ -50,7 +50,7 @@ const App = () => {
   const saveData = () => {
     const dataToSave = { blocks, globalNote, brandName };
     localStorage.setItem('xonfox_vault_v11_neon', JSON.stringify(dataToSave));
-    alert("Saved Successfully!");
+    alert("Saved Locally Successfully!");
   };
 
   const exportData = () => {
@@ -110,25 +110,6 @@ const App = () => {
     setBlocks(blocks.map(b => b.id === id ? { ...b, ...updates } : b));
   };
 
-  const copyToClipboard = (text) => {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      alert("Copied!");
-    } catch (err) {
-      console.error('Copy failed', err);
-    }
-    document.body.removeChild(textArea);
-  };
-
-  const hexToRgb = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : 'rgb(0,0,0)';
-  };
-
   return (
     <div className="min-h-screen bg-[#450693] text-[#000000] p-4 pb-44 font-sans selection:bg-[#FFC400] selection:text-black">
       
@@ -167,8 +148,7 @@ const App = () => {
       </header>
 
       <main className="max-w-4xl mx-auto space-y-12">
-        
-        {/* MAIN CANVAS */}
+        {/* MAIN VISION NOTE */}
         <section className="bg-[#111827] rounded-3xl p-8 border-4 border-[#000000] shadow-[15px_15px_0px_0px_#8C00FF]">
           <div className="flex items-center justify-between mb-6 border-b-2 border-[#1F2937] pb-4">
             <div className="flex items-center gap-2 text-[#FFC400] font-black text-xs uppercase tracking-[0.2em]">
@@ -177,7 +157,7 @@ const App = () => {
             </div>
           </div>
           <textarea 
-            className="w-full min-h-[160px] bg-transparent text-xl leading-relaxed outline-none resize-none placeholder:text-[#374151] text-[#F9FAFB] font-bold overflow-hidden"
+            className="w-full min-h-[120px] bg-transparent text-xl leading-relaxed outline-none resize-none placeholder:text-[#374151] text-[#F9FAFB] font-bold overflow-hidden"
             placeholder="Describe your brand strategy..."
             value={globalNote}
             onInput={handleAutoHeight}
@@ -185,7 +165,7 @@ const App = () => {
           />
         </section>
 
-        {/* CONTENT BLOCKS */}
+        {/* DYNAMIC BLOCKS */}
         <div className="grid grid-cols-1 gap-12">
           {blocks.map((block) => (
             <div key={block.id} className="bg-[#FFFFFF] rounded-2xl p-8 border-4 border-[#000000] relative shadow-[10px_10px_0px_0px_#111827]">
@@ -202,7 +182,7 @@ const App = () => {
                 />
               </div>
 
-              {/* NOTE BLOCK */}
+              {/* TEXT BLOCK */}
               {block.type === 'text' && (
                 <textarea 
                   className="w-full min-h-[100px] bg-[#F9FAFB] p-5 rounded-xl outline-none text-[#111827] text-lg font-bold border-2 border-[#E5E7EB] focus:border-[#8C00FF]"
@@ -245,7 +225,28 @@ const App = () => {
                 </div>
               )}
 
-              {/* TYPOGRAPHY TOOL */}
+              {/* COLOR SWATCHES */}
+              {block.type === 'color' && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {block.swatches.map((swatch, sIdx) => (
+                    <div key={swatch.id} className="bg-[#F9FAFB] p-5 rounded-xl border-4 border-black relative group">
+                      <div className="w-full h-16 rounded-lg border-2 border-black mb-3" style={{ backgroundColor: swatch.hex }}></div>
+                      <input className="w-full text-[10px] font-black mb-1 outline-none uppercase bg-transparent" value={swatch.label} onChange={(e) => {
+                        const n = [...block.swatches]; n[sIdx].label = e.target.value; updateBlock(block.id, { swatches: n });
+                      }} />
+                      <div className="flex items-center justify-between">
+                        <input type="color" className="w-6 h-6 border-0 cursor-pointer" value={swatch.hex} onChange={(e) => {
+                          const n = [...block.swatches]; n[sIdx].hex = e.target.value; updateBlock(block.id, { swatches: n });
+                        }} />
+                        <span className="text-[10px] font-mono font-bold">{swatch.hex.toUpperCase()}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <button onClick={() => updateBlock(block.id, { swatches: [...block.swatches, { id: Date.now(), hex: '#000000', label: 'NEW COLOR' }] })} className="border-4 border-dashed rounded-xl flex items-center justify-center p-8 text-gray-300 hover:text-black transition-colors"><Plus size={32}/></button>
+                </div>
+              )}
+
+              {/* TYPOGRAPHY */}
               {block.type === 'font' && (
                 <div className="space-y-4">
                   {block.fonts.map((f, fIdx) => (
@@ -256,9 +257,6 @@ const App = () => {
                       <input className="w-24 text-[10px] font-bold outline-none bg-white border border-black p-1" value={f.weight} placeholder="WEIGHT" onChange={(e) => {
                         const n = [...block.fonts]; n[fIdx].weight = e.target.value; updateBlock(block.id, { fonts: n });
                       }} />
-                      <input className="flex-1 text-[10px] font-bold outline-none bg-white border border-black p-1" value={f.usage} placeholder="USAGE" onChange={(e) => {
-                        const n = [...block.fonts]; n[fIdx].usage = e.target.value; updateBlock(block.id, { fonts: n });
-                      }} />
                       <button onClick={() => {
                         const n = block.fonts.filter(x => x.id !== f.id); updateBlock(block.id, { fonts: n });
                       }} className="text-red-500"><Trash2 size={16}/></button>
@@ -268,7 +266,43 @@ const App = () => {
                 </div>
               )}
 
-              {/* LINK HUB */}
+              {/* TABLE */}
+              {block.type === 'table' && (
+                <div className="overflow-x-auto border-4 border-black rounded-xl">
+                   <table className="w-full text-sm border-collapse">
+                    <thead>
+                       <tr className="border-b-4 border-black bg-[#F3F4F6]">
+                          {block.rows[0].map((cell, cIdx) => (
+                            <th key={cIdx} className="p-2 border-r-2 border-black last:border-r-0">
+                               <input className="w-full bg-transparent text-[9px] font-black text-center outline-none" value={cell} onChange={(e) => {
+                                 const n = [...block.rows]; n[0][cIdx] = e.target.value; updateBlock(block.id, { rows: n });
+                               }} />
+                            </th>
+                          ))}
+                       </tr>
+                    </thead>
+                    <tbody>
+                      {block.rows.slice(1).map((row, rIdx) => (
+                        <tr key={rIdx} className="border-b-2 border-black last:border-b-0">
+                          {row.map((cell, cIdx) => (
+                            <td key={cIdx} className="p-4 border-r-2 border-black last:border-r-0">
+                              <input className="w-full outline-none font-bold bg-transparent" value={cell} onChange={(e) => {
+                                const n = [...block.rows]; n[rIdx+1][cIdx] = e.target.value; updateBlock(block.id, { rows: n });
+                              }} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="flex border-t-4 border-black divide-x-2 divide-black">
+                    <button onClick={() => updateBlock(block.id, { rows: [...block.rows, new Array(block.rows[0].length).fill('')] })} className="flex-1 py-3 text-[9px] font-black uppercase hover:bg-gray-100">Add Row</button>
+                    <button onClick={() => updateBlock(block.id, { rows: block.rows.map(r => [...r, '']) })} className="flex-1 py-3 text-[9px] font-black uppercase hover:bg-gray-100">Add Column</button>
+                  </div>
+                </div>
+              )}
+
+              {/* LINKS */}
               {block.type === 'link' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {block.links.map((l, lIdx) => (
@@ -280,22 +314,22 @@ const App = () => {
                       <button onClick={() => window.open(l.url, '_blank')} className="p-1 hover:text-[#8C00FF]"><ChevronRight size={16}/></button>
                     </div>
                   ))}
-                  <button onClick={() => updateBlock(block.id, { links: [...block.links, { id: Date.now(), url: 'https://', platform: '' }] })} className="border-2 border-dashed border-gray-300 p-3 rounded-xl text-gray-400 text-[10px] font-black">ADD LINK</button>
+                  <button onClick={() => updateBlock(block.id, { links: [...block.links, { id: Date.now(), url: 'https://', platform: '' }] })} className="border-2 border-dashed border-gray-300 p-3 rounded-xl text-gray-400 text-[10px] font-black">ADD NEW LINK</button>
                 </div>
               )}
 
-              {/* LOGO VAULT */}
+              {/* LOGOS */}
               {block.type === 'logo' && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {block.images.map((img, iIdx) => (
-                    <div key={iIdx} className="aspect-square bg-[#F9FAFB] border-2 border-black rounded-xl relative group">
-                      <img src={img} className="w-full h-full object-contain p-2" />
+                    <div key={iIdx} className="aspect-square bg-[#F9FAFB] border-2 border-black rounded-xl relative group overflow-hidden">
+                      <img src={img} className="w-full h-full object-contain p-2" alt="brand-asset" />
                       <button onClick={() => {
                          const n = block.images.filter((_, i) => i !== iIdx); updateBlock(block.id, { images: n });
                       }} className="absolute top-1 right-1 bg-black text-white p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"><X size={12}/></button>
                     </div>
                   ))}
-                  <label className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
+                  <label className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
                     <ImageIcon size={24} className="text-gray-300" />
                     <input type="file" className="hidden" accept="image/*" onChange={(e) => {
                       const file = e.target.files[0];
@@ -309,75 +343,12 @@ const App = () => {
                 </div>
               )}
 
-              {/* TABLE GRID */}
-              {block.type === 'table' && (
-                <div className="overflow-x-auto border-4 border-black rounded-xl">
-                   <table className="w-full text-sm border-collapse table-fixed">
-                    <thead>
-                       <tr className="border-b-4 border-black bg-[#F3F4F6]">
-                          {block.rows[0].map((cell, cIdx) => (
-                            <th key={cIdx} className="p-2 border-r-2 border-black last:border-r-0 relative">
-                               <input className="w-full bg-transparent text-[9px] font-black text-center outline-none" value={cell} onChange={(e) => {
-                                 const n = [...block.rows]; n[0][cIdx] = e.target.value; updateBlock(block.id, { rows: n });
-                               }} />
-                            </th>
-                          ))}
-                          <th className="w-10"></th>
-                       </tr>
-                    </thead>
-                    <tbody>
-                      {block.rows.slice(1).map((row, rIdx) => (
-                        <tr key={rIdx} className="border-b-2 border-black last:border-b-0">
-                          {row.map((cell, cIdx) => (
-                            <td key={cIdx} className="p-4 border-r-2 border-black last:border-r-0">
-                              <input className="w-full outline-none font-bold" value={cell} onChange={(e) => {
-                                const n = [...block.rows]; n[rIdx+1][cIdx] = e.target.value; updateBlock(block.id, { rows: n });
-                              }} />
-                            </td>
-                          ))}
-                          <td className="w-10 text-center border-l-2 border-black bg-[#F9FAFB]">
-                            <button onClick={() => {
-                              const n = block.rows.filter((_, i) => i !== rIdx+1); updateBlock(block.id, { rows: n });
-                            }} className="text-red-500"><X size={16}/></button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <div className="flex border-t-4 border-black divide-x-2 divide-black">
-                    <button onClick={() => updateBlock(block.id, { rows: [...block.rows, new Array(block.rows[0].length).fill('')] })} className="flex-1 py-3 text-[9px] font-black uppercase hover:bg-gray-100">Add Row</button>
-                    <button onClick={() => updateBlock(block.id, { rows: block.rows.map(r => [...r, '']) })} className="flex-1 py-3 text-[9px] font-black uppercase hover:bg-gray-100">Add Col</button>
-                    <div className="w-10 bg-gray-100"></div>
-                  </div>
-                </div>
-              )}
-
-              {/* COLOR PALETTE */}
-              {block.type === 'color' && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {block.swatches.map((swatch, sIdx) => (
-                    <div key={swatch.id} className="bg-[#F9FAFB] p-5 rounded-xl border-4 border-black relative group">
-                      <div className="w-full h-16 rounded-lg border-2 border-black mb-3" style={{ backgroundColor: swatch.hex }}></div>
-                      <input className="w-full text-[10px] font-black mb-1 outline-none uppercase" value={swatch.label} onChange={(e) => {
-                        const n = [...block.swatches]; n[sIdx].label = e.target.value; updateBlock(block.id, { swatches: n });
-                      }} />
-                      <div className="flex items-center justify-between">
-                        <input type="color" className="w-6 h-6 border-0 cursor-pointer" value={swatch.hex} onChange={(e) => {
-                          const n = [...block.swatches]; n[sIdx].hex = e.target.value; updateBlock(block.id, { swatches: n });
-                        }} />
-                        <span className="text-[10px] font-mono">{swatch.hex.toUpperCase()}</span>
-                      </div>
-                    </div>
-                  ))}
-                  <button onClick={() => updateBlock(block.id, { swatches: [...block.swatches, { id: Date.now(), hex: '#000000', label: 'NEW COLOR' }] })} className="border-4 border-dashed rounded-xl flex items-center justify-center text-gray-300"><Plus size={32}/></button>
-                </div>
-              )}
             </div>
           ))}
         </div>
       </main>
 
-      {/* FLOATING CONTROL DOCK - NEW TOOLS ADDED */}
+      {/* FLOATING CONTROL DOCK */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#000000] px-6 py-4 rounded-2xl flex items-center gap-8 shadow-2xl z-50 border-b-4 border-[#FF3F7F]">
         <button onClick={() => addBlock('text')} className="text-[#D1D5DB] hover:text-[#FF3F7F] flex flex-col items-center gap-1 group">
           <Type size={20} />
@@ -405,7 +376,7 @@ const App = () => {
         </button>
         <button onClick={() => addBlock('table')} className="text-[#D1D5DB] hover:text-[#8C00FF] flex flex-col items-center gap-1 group">
           <Grid size={20} />
-          <span className="text-[7px] font-black uppercase group-hover:opacity-100 opacity-0 transition-opacity">Grid</span>
+          <span className="text-[7px] font-black uppercase group-hover:opacity-100 opacity-0 transition-opacity">Table</span>
         </button>
       </div>
     </div>
